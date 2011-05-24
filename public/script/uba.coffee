@@ -24,6 +24,7 @@ UBA =
     schedule: []
     season: 0
     standings: {}
+    storekey: null 
     teams: []
 
   genesis: (n=32) ->
@@ -91,7 +92,7 @@ UBA =
         success: (d) ->
           wordlist = d.split '\n'
           wordlist.shuffle()
-          UBA.data.namepool = wordlist.slice 0, 1000
+          UBA.data.namepool = wordlist.slice 0, 16454
   team:
     ROSTERSLOTCHART:
       O:3, I:4, C:1, H:1, P:4
