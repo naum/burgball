@@ -16,10 +16,22 @@ Array::shuffle = ->
 UBA = 
   
   data:
+    batterstat: {}
+    fielderstat: {}
     freeagents: []
     namepool: []
+    pitcherstat: {}
+    schedule: []
+    season: 0
+    standings: {}
     teams: []
 
+  genesis: (n=32) ->
+    for t in [1..n]
+      for p, s of UBA.team.ROSTERSLOTCHART
+        for i in [1..s]
+          UBA.data.freeagents.push UBA.man.spawn(p, UBA.namepool.draw())
+    
   man:
     SKILLMARKS: 
       W: ['w', '', 'C', '^', '&#9678;' ]
@@ -83,6 +95,8 @@ UBA =
   team:
     ROSTERSLOTCHART:
       O:3, I:4, C:1, H:1, P:4
+    lineup: []
+    rotation: []
 
 root = global ? window
 root.UBA = UBA
