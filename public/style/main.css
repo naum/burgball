@@ -94,7 +94,30 @@ a.linkbutton:hover {
   color: #000000;
 }
 
-.rosterchart td {
+.rosterchart {
+  margin: 2em auto;
+}
+
+.rosterchart td, .rosterchart th {
   font-size: 0.8em;
   padding: 0.3em 0.6em;
+}
+
+.rosterchart th {
+  background-color: #0E6A51;
+  color: #C6F4E8;
+  text-align: left;
+}
+
+.rosterchart tr {
+  border-bottom: 1px solid #0E6A51;
+}
+
+.rosterchart tr.blank {
+  border-bottom: none;
+}
+
+.rosterchart tr.thead {
+  border-top: 3px solid #55DEBA;
+  border-bottom: 1px solid #159E7A;
 }

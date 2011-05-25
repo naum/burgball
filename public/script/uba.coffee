@@ -42,19 +42,23 @@ UBA =
       for p, s of UBA.team.ROSTERSLOTCHART
         for i in [1..s]
           UBA.data.freeagents.push UBA.man.spawn(p, UBA.namepool.draw())
-    UBA.data.freeagents.sort UBA.man.byWorth
+    @data.freeagents.sort @man.byWorth
     teamrosterneeds = {}
     for c, t of UBA.data.teams
       teamrosterneeds[c] = UBA.team.needs(c, t)
-    console.log teamrosterneeds
-    #teamneedlist.shuffle()
-    #while teamneedlist.length > 0
-    #  need = teamneedlist.shift()
-    #  city = need[0]
-    #  i = 0
-    #  i += 1 until need[1] == UBA.data.freeagents[i].pos
-    #  fa = (UA.data.freeagents.splice i, 1)[0]
-    #  UBA.team.add city, fa
+    tnl = $.keys UBA.data.teams
+    while UBA.data.freeagents.length > 0
+      fa = UBA.data.freeagents.shift()
+      #console.log "drafting #{fa.name}..."
+      i = 0
+      while teamrosterneeds[tnl[i]][fa.pos] == 0
+        i += 1
+      tn = tnl[i]
+      UBA.team.add UBA.data.teams[tn], fa
+      teamrosterneeds[tn][fa.pos] -= 1
+      tp = (tnl.splice i, 1)[0]
+      tnl.push tp
+    console.log UBA.data.teams
     true
     
   man:
