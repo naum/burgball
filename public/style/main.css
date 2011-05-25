@@ -3,7 +3,7 @@
 body {
   background-color: #073529;
   color: #FFFFFF;
-  font-family: "Lucida Bright",serif;
+  font-family: sans-serif;
   font-size: 16px;
   margin: 24px auto;
   text-align: justify;
@@ -120,4 +120,5 @@ a.linkbutton:hover {
 .rosterchart tr.thead {
   border-top: 3px solid #55DEBA;
   border-bottom: 1px solid #159E7A;
+  font-size: 0.8em;
 }
