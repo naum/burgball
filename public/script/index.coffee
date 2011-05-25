@@ -1,13 +1,7 @@
 $(document).ready ->
   UBA.genesis()
   tout = '<table class="rosterchart">'
-  UBA.data.freeagents.sort (a, b) ->
-    if UBA.man.worth(a) > UBA.man.worth(b)
-      -1
-    else if UBA.man.worth(a) < UBA.man.worth(b)
-      1
-    else
-      0
+  UBA.data.freeagents.sort UBA.man.byWorth
   for m in UBA.data.freeagents
     sklit = UBA.man.displaySkill m.skill
     worth = UBA.man.worth m
@@ -16,6 +10,9 @@ $(document).ready ->
   tout += '</table>'
   $('#mainfield').html tout
   ubadatser = JSON.stringify UBA.data
-  $('#dumppanel').html "UBA.data.length = #{ubadatser.length}"
+  $('#dumppanel').html "UBA.data.length = #{ubadatser.length}" + '<br>\n'
+  tl = $.keys UBA.data.teams
+  $('#dumppanel').append tl.join '<br>\n'
+
 
 

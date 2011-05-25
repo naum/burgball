@@ -13,25 +13,49 @@ Array::shuffle = ->
     n -= 1
   true
 
+
+$.keys = (o) ->
+  (k for k, v of o)
+
+
 UBA = 
   
   data:
     batterstat: {}
     fielderstat: {}
     freeagents: []
+    lidkey: null
     namepool: []
     pitcherstat: {}
     schedule: []
     season: 0
     standings: {}
     storekey: null 
-    teams: []
+    teams: {}
+    title: 'Universal Baseball Association'
 
   genesis: (n=32) ->
+    UBA.team.CITIES.shuffle()
     for t in [1..n]
+      tn = UBA.team.CITIES.shift()
+      UBA.data.teams[tn] = UBA.team.create()
       for p, s of UBA.team.ROSTERSLOTCHART
         for i in [1..s]
           UBA.data.freeagents.push UBA.man.spawn(p, UBA.namepool.draw())
+    UBA.data.freeagents.sort UBA.man.byWorth
+    teamrosterneeds = {}
+    for c, t of UBA.data.teams
+      teamrosterneeds[c] = UBA.team.needs(c, t)
+    console.log teamrosterneeds
+    #teamneedlist.shuffle()
+    #while teamneedlist.length > 0
+    #  need = teamneedlist.shift()
+    #  city = need[0]
+    #  i = 0
+    #  i += 1 until need[1] == UBA.data.freeagents[i].pos
+    #  fa = (UA.data.freeagents.splice i, 1)[0]
+    #  UBA.team.add city, fa
+    true
     
   man:
     SKILLMARKS: 
@@ -45,6 +69,13 @@ UBA =
       F: [ 'W', 'K', 'P', 'R', 'G', 'T' ]
       H: [ 'W', 'K', 'P', 'R' ]
       P: [ 'W', 'K', 'P', 'G', 'T' ]
+    byWorth: (a, b) ->
+      if UBA.man.worth(a) > UBA.man.worth(b)
+        -1
+      else if UBA.man.worth(a) < UBA.man.worth(b)
+        1
+      else
+        0
     displaySkill: (ss) ->
       s = ''
       s += UBA.man.SKILLMARKS[sk][v] for sk, v of ss
@@ -93,11 +124,29 @@ UBA =
           wordlist = d.split '\n'
           wordlist.shuffle()
           UBA.data.namepool = wordlist.slice 0, 16454
+
   team:
+    CITIES: [
+      'New York', 'Los Angeles', 'Chicago', 'Dallas', 'Philadelphia',
+      'Houston', 'Washington', 'Miami', 'Atlanta', 'Boston',
+      'San Francisco', 'Detroit', 'Riverside', 'Phoenix', 'Seattle',
+      'Minneapolis', 'San Diego', 'St. Louis', 'Tampa', 'Baltimore',
+      'Denver', 'Pittsburgh', 'Portland', 'Sacramento', 'San Antonio',
+      'Orlando', 'Cincinnati', 'Cleveland', 'Kansas City', 'Las Vegas',
+      'San Jose', 'Columbus'
+    ]
     ROSTERSLOTCHART:
       O:3, I:4, C:1, H:1, P:4
-    lineup: []
-    rotation: []
+    add: (t, m) ->
+      if m.pos != 'P' then t.lineup.push m else t.rotation.push m
+    create: ->
+      { lineup:[], rotation:[] }
+    needs: (c, t) ->
+      needchart = {}
+      needchart[p] = v for p, v of UBA.team.ROSTERSLOTCHART
+      needchart[m.pos] -= 1 for m in t.lineup
+      needchart[m.pos] -= 1 for m in t.rotation
+      needchart
 
 root = global ? window
 root.UBA = UBA

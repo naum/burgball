@@ -66,6 +66,7 @@ table {
 }
 
 #dumppanel {
+  color: #666666;
   font-size: 0.8em;
   font-family: monospace;
   margin: 3em 0;
