@@ -13,43 +13,51 @@ Array::shuffle = ->
     n -= 1
   true
 
+$.by = (sf, sod=true, sf2=null, sod2=true) ->
+  (a, b) ->
+    if sf(a) > sf(b)
+      if sod then -1 else 1
+    else if sf(a) < sf(b)
+      if sod then 1 else -1
+    else
+      if not sf2
+        0
+      else
+        if sf2(a) > sf2(b)
+          if sod2 then -1 else 1
+        else if sf2(a) < sf2(b)
+          if sod2 then 1 else -1
+        else 
+          0
 
 $.keys = (o) ->
-  (k for k, v of o)
+  (k for k, v of o when o.hasOwnProperty(k))
 
 
 UBA = 
   
   data:
-    batterstat: {}
-    fielderstat: {}
-    freeagents: []
-    lidkey: null
-    namepool: []
-    pitcherstat: {}
-    schedule: []
-    season: 0
-    standings: {}
-    storekey: null 
-    teams: {}
     title: 'Universal Baseball Association'
 
   genesis: (n=32) ->
-    UBA.team.CITIES.shuffle()
+    @resetData()
+    @data.lidkey = Math.random().toString(36).substr(2, 9)
+    tnpool = UBA.team.CITIES.slice 0
+    tnpool.shuffle()
     for t in [1..n]
-      tn = UBA.team.CITIES.shift()
+      tn = tnpool.shift()
       UBA.data.teams[tn] = UBA.team.create()
       for p, s of UBA.team.ROSTERSLOTCHART
         for i in [1..s]
           UBA.data.freeagents.push UBA.man.spawn(p, UBA.namepool.draw())
-    @data.freeagents.sort @man.byWorth
+    #@data.freeagents.sort @man.byWorth
+    @data.freeagents.sort $.by(@man.worth)
     teamrosterneeds = {}
     for c, t of UBA.data.teams
       teamrosterneeds[c] = UBA.team.needs(c, t)
     tnl = $.keys UBA.data.teams
     while UBA.data.freeagents.length > 0
       fa = UBA.data.freeagents.shift()
-      #console.log "drafting #{fa.name}..."
       i = 0
       while teamrosterneeds[tnl[i]][fa.pos] == 0
         i += 1
@@ -58,7 +66,10 @@ UBA =
       teamrosterneeds[tn][fa.pos] -= 1
       tp = (tnl.splice i, 1)[0]
       tnl.push tp
-    console.log UBA.data.teams
+    x = 0
+    for c in $.keys(UBA.data.teams)
+      @data.standings[c] = UBA.standing.create(x)
+      x += 1
     true
     
   man:
@@ -73,13 +84,6 @@ UBA =
       F: [ 'W', 'K', 'P', 'R', 'G', 'T' ]
       H: [ 'W', 'K', 'P', 'R' ]
       P: [ 'W', 'K', 'P', 'G', 'T' ]
-    byWorth: (a, b) ->
-      if UBA.man.worth(a) > UBA.man.worth(b)
-        -1
-      else if UBA.man.worth(a) < UBA.man.worth(b)
-        1
-      else
-        0
     displaySkill: (ss) ->
       s = ''
       s += UBA.man.SKILLMARKS[sk][v] for sk, v of ss
@@ -128,6 +132,39 @@ UBA =
           wordlist = d.split '\n'
           wordlist.shuffle()
           UBA.data.namepool = wordlist.slice 0, 16454
+
+  resetData: ->
+    @data.batterstat = {}
+    @data.fielderstat = {}
+    @data.freeagents = []
+    @data.namepool = []
+    @data.pitcherstat = {}
+    @data.round = 0
+    @data.schedule = []
+    @data.season = 0
+    @data.standings = {}
+    @data.teams = {}
+
+  saddle: ->
+    if localStorage.getItem('ubadata')
+      UBA.data = JSON.parse localStorage.getItem('ubadata')
+      true
+    else
+      false
+
+  standing: 
+    create: (i) ->
+      { iseed:i, ra:0, w:0, l:0, rf:0, ra:0 } 
+    group: (c) ->
+      tt = $.keys(UBA.data.standings).length
+      UBA.data.standings[c].iseed % (tt / 4)
+    pwp: (c) ->
+      UBA.data.standings[c].rf / UBA.data.standings[c].ra
+    winPct: (c) ->
+      UBA.data.standings[c].w / (UBA.data.standings[c].w + UBA.data.standings[c].l)
+
+  stash: ->
+    localStorage.setItem 'ubadata', JSON.stringify(UBA.data)
 
   team:
     CITIES: [

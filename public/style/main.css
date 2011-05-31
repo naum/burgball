@@ -94,6 +94,15 @@ a.linkbutton:hover {
   color: #000000;
 }
 
+.highlight {
+  background-color: #159E7A;
+  border: 1px solid #8EEAD1;
+  color: #C6F4E8;
+  font-weight: bold;
+  padding: 0.6em 2em 0.6em;
+  text-align: center;
+}
+
 .rosterchart {
   margin: 2em auto;
 }
@@ -121,4 +130,18 @@ a.linkbutton:hover {
   border-top: 3px solid #55DEBA;
   border-bottom: 1px solid #159E7A;
   font-size: 0.8em;
+}
+
+.rounded {
+  border-radius: 6px;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+}
+
+.sitemeta {
+  color: #999999;
+  font-size: 0.8em;
+  margin-top: 2em;
+  padding: 1.5em auto;
+  text-align: center;
 }
