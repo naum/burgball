@@ -30,6 +30,14 @@ $.by = (sf, sod=true, sf2=null, sod2=true) ->
         else 
           0
 
+$.cmp = (a, b) ->
+  if a < b 
+    -1
+  else if a > b
+    1
+  else 
+    0
+
 $.keys = (o) ->
   (k for k, v of o when o.hasOwnProperty(k))
 
